@@ -22,14 +22,6 @@ module u_bracket(width = 56.4, length = 46.1, profile = 10, slot_depth = 0.8, li
     }
 }
 
-
-
-
-//u_bracket();
-
-
-
-
 module hdd_blank(hdd_length = 146, hdd_width  = 101.6, hdd_height = 25.4, hole_diameter = 4.0) {
 
     // Нижние отверстия (по длине 26.1 мм от краёв, по ширине на 82.5 мм между центрами)
@@ -68,13 +60,28 @@ module hdd_bracket(hdd_length = 146, hdd_width  = 101.6, hdd_height = 25.4,thick
     difference() {
         hdd_blank(hdd_length, hdd_width, hdd_height);
         
-        
-        translate([thickness, thickness, thickness]) {
-            cube([hdd_length - 2 * thickness, hdd_width - 2 * thickness, hdd_height - thickness]);
+        y_thickness = 14;
+        translate([0, y_thickness, thickness]) {
+            cube([hdd_length, hdd_width - 2 * y_thickness, hdd_height - thickness]);
         }
     }
 }
 
-hdd_bracket();
+difference() {
+    union() {
+        hdd_bracket();
 
-for 
+        b_offset = 101.6 - (101.6 - (56.4 + 2 * 10))/2;
+
+        for (i = [10, 75])
+            translate([i, b_offset, 15])
+                rotate([-15, 0, 270])
+                    u_bracket();
+    }
+    
+    for (i = [7, 101.6 - 7]) 
+        translate([0, i, 18.4])
+            rotate([0, 90, 0])
+                cylinder(h=146, d=10, $fn=30);
+    
+}
